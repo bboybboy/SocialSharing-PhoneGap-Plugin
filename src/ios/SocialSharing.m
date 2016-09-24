@@ -6,6 +6,7 @@
 #import <MessageUI/MFMessageComposeViewController.h>
 #import <MessageUI/MFMailComposeViewController.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <AssetsLibrary/AssetsLibrary.h>
 
 static NSString *const kShareOptionMessage = @"message";
 static NSString *const kShareOptionSubject = @"subject";
@@ -361,12 +362,6 @@ static NSString *const kShareOptionUrl = @"url";
         NSURL *file = [self getFile:path];
         NSData* data = [fileManager contentsAtPath:file.path];
 
-        if (!data) {
-          CDVPluginResult * pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"invalid attachment"];
-          [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-          return;
-        }
-
         NSString* fileName;
         NSString* mimeType;
         NSString* basename = [self getBasenameFromAttachmentPath:path];
@@ -485,7 +480,7 @@ static NSString *const kShareOptionUrl = @"url";
     _command = command;
     [self.commandDelegate runInBackground:^{
       picker.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-      [[self getTopMostViewController] presentViewController:picker animated:NO completion:nil];
+      [[self getTopMostViewController] presentViewController:picker animated:YES completion:nil];
     }];
   } else {
     CDVPluginResult * pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"not available"];
@@ -539,7 +534,21 @@ static NSString *const kShareOptionUrl = @"url";
   // subject is not supported by the SLComposeViewController
   NSArray  *filenames = [command.arguments objectAtIndex:2];
 
-  // only use the first image (for now.. maybe we can share in a loop?)
+
+    
+    //Fucking makafaka
+    if ([((NSString *)filenames[0]) hasSuffix:@"mp4"] || [((NSString *)filenames[0]) hasSuffix:@"mov"] || [((NSString *)filenames[0]) hasSuffix:@"avi"]) {
+        ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+        [library writeVideoAtPathToSavedPhotosAlbum:[NSURL URLWithString:filenames[0]] completionBlock:^(NSURL *iurl, NSError *error) {
+            NSArray *argh  = [iurl.absoluteString componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"&"]];
+            NSArray *arghh = [argh[0] componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"?id="]];
+            NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat:@"instagram://library?LocalIdentifier=%@&InstagramCaption=%@", arghh.lastObject,message]];
+            [[UIApplication sharedApplication] openURL:instagramURL];
+        }];
+        return;
+    }
+    
+      // only use the first image (for now.. maybe we can share in a loop?)
   UIImage* image = nil;
   for (NSString* filename in filenames) {
     image = [self getImage:filename];
@@ -551,7 +560,7 @@ static NSString *const kShareOptionUrl = @"url";
   NSString *path = [tmpDir stringByAppendingPathComponent:@"instagram.igo"];
   [UIImageJPEGRepresentation(image, 1.0) writeToFile:path atomically:YES];
 
-  _documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:path]];
+  _documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:filenames[0]]];
   _documentInteractionController.delegate = self;
   _documentInteractionController.UTI = @"com.instagram.exclusivegram";
 
