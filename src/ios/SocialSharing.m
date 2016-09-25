@@ -551,6 +551,19 @@ static NSString *const kShareOptionUrl = @"url";
         return;
     }
     
+    // Dont do same, this is fucking spike writen on legs in 2 mins.....
+    if ([((NSString *)filenames[0]) hasSuffix:@"png"] || [((NSString *)filenames[0]) hasSuffix:@"jpg"] || [((NSString *)filenames[0]) hasSuffix:@"jpeg"]) {
+        ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+        UIImage *image = [self getImage:filenames[0]];
+        [library writeImageToSavedPhotosAlbum:image.CGImage orientation:(ALAssetOrientation)image.imageOrientation completionBlock:^(NSURL *assetURL, NSError *error ) {
+            NSArray *argh  = [assetURL.absoluteString componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"&"]];
+            NSArray *arghh = [argh[0] componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"?id="]];
+            NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat:@"instagram://library?LocalIdentifier=%@&InstagramCaption=%@", arghh.lastObject,message]];
+            [[UIApplication sharedApplication] openURL:instagramURL];
+         }];
+        return;
+    }
+    
       // only use the first image (for now.. maybe we can share in a loop?)
   UIImage* image = nil;
   for (NSString* filename in filenames) {
