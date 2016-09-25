@@ -38,6 +38,14 @@
         <param name="onload" value="true" />
       </feature>
     </config-file>
+          
+          <config-file target="*-Info.plist" parent="LSApplicationQueriesSchemes">
+          <array>
+            <string>fb</string>
+            <string>instagram</string>
+          </array>
+        </config-file>
+
 
     <header-file src="src/ios/NSString+URLEncoding.h"/>
     <source-file src="src/ios/NSString+URLEncoding.m"/>
