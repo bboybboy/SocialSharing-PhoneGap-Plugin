@@ -255,11 +255,12 @@ public class SocialSharing extends CordovaPlugin {
                   sendIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
                 }
               }
+              // OMFG why i did this
             } else {
-              sendIntent.setType("text/plain");
+              sendIntent.setType("image/*");
             }
           } else {
-            sendIntent.setType("text/plain");
+            sendIntent.setType("image/*");
           }
         } catch (Exception e) {
           callbackContext.error(e.getMessage());
