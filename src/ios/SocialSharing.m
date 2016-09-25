@@ -224,6 +224,7 @@ static NSString *const kShareOptionUrl = @"url";
 - (void)canShareVia:(CDVInvokedUrlCommand*)command {
   NSString *via = [command.arguments objectAtIndex:4];
   CDVPluginResult * pluginResult;
+    
   if ([@"sms" caseInsensitiveCompare:via] == NSOrderedSame && [self canShareViaSMS]) {
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
   } else if ([@"email" caseInsensitiveCompare:via] == NSOrderedSame && [self isEmailAvailable]) {
@@ -234,6 +235,8 @@ static NSString *const kShareOptionUrl = @"url";
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
   } else if ([self isAvailableForSharing:command type:via]) {
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+  } else if ([via containsString:@"facebook"]) {
+      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
   } else {
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"not available"];
   }
