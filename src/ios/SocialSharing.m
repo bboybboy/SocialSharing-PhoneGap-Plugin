@@ -296,6 +296,9 @@ static NSString *const kShareOptionUrl = @"url";
     if (image != nil) {
       [composeViewController addImage:image];
     }
+    if (!image) {
+      [composeViewController addURL:[NSURL URLWithString:filename]];
+    }
   }
 
   if (urlString != (id)[NSNull null]) {
