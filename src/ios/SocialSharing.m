@@ -555,7 +555,7 @@ static NSString *const kShareOptionUrl = @"url";
     }
     
     // Dont do same, this is fucking spike writen on legs in 2 mins.....
-    if ([((NSString *)filenames[0]) hasSuffix:@"png"] || [((NSString *)filenames[0]) hasSuffix:@"jpg"] || [((NSString *)filenames[0]) hasSuffix:@"jpeg"]) {
+    if ([((NSString *)filenames[0]) hasSuffix:@"png"] || [((NSString *)filenames[0]) hasSuffix:@"jpg"] || [((NSString *)filenames[0]) hasSuffix:@"jpeg"]|| [((NSString *)filenames[0]) hasSuffix:@"gif"]) {
         ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
         UIImage *image = [self getImage:filenames[0]];
         [library writeImageToSavedPhotosAlbum:image.CGImage orientation:(ALAssetOrientation)image.imageOrientation completionBlock:^(NSURL *assetURL, NSError *error ) {
